@@ -2,19 +2,68 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 14
     commands:
-      - echo Installing NGINX
-      - sudo apt-get update
-      - sudo apt-get install nginx -y
-  build:
+      - echo Installing frontend dependencies...
+      - cd Ui && npm install
+      - echo Installing API dependencies...
+      - cd ../api && npm install
+
+  pre_build:
     commands:
-      - echo Build started on 'date'
-      - cp index.html /var/www/html/
+      - echo Running pre-build tasks...
+      # Add any pre-build tasks you need here
+
+  frontend_build:
+    commands:
+      - echo Building the React frontend...
+      - cd ../Ui && npm run build
+
+  backend_build:
+    commands:
+      - echo Building the Express API...
+      - cd ../api && npm run build
+
   post_build:
-   commands:
-    - echo Configuring NGINX
+    commands:
+      - echo Running post-build tasks...
+      # Add any post-build tasks you need here
 
 artifacts:
   files:
     - '**/*'
+  discard-paths: yes
+  base-directory: 
+    - Ui/build
+    - api/build
+
+cache:
+  paths:
+    - Ui/node_modules/
+    - api/node_modules/
+
+
+
+
+
+# version: 0.2
+
+# phases:
+#   install:
+#     commands:
+#       - echo Installing NGINX
+#       - sudo apt-get update
+#       - sudo apt-get install nginx -y
+#   build:
+#     commands:
+#       - echo Build started on 'date'
+#       - cp index.html /var/www/html/
+#   post_build:
+#    commands:
+#     - echo Configuring NGINX
+
+# artifacts:
+#   files:
+#     - '**/*'
     
